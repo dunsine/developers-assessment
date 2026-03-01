@@ -1,0 +1,183 @@
+{
+  "POST /api/v1/settlement/generate-remittances-for-all-users": {
+    "status_code": 201,
+    "response": {
+      "processed": 1,
+      "total": 1,
+      "remittances": [
+        {
+          "id": "e536c6ff-5733-40c8-9972-a64ca6f4d9e4",
+          "user_id": "5ab7017f-02cb-4a7c-adbd-8a2f449a6827",
+          "period_start": "2026-03-01",
+          "period_end": "2026-03-01",
+          "total_amount": 575.0,
+          "status": "SUCCESS",
+          "remittance_worklogs": [
+            {
+              "id": "4d878628-bd03-4be0-b63c-4541f4473a29",
+              "worklog_id": "b0825bf9-8ca1-4a0b-827d-64b5e37692e5",
+              "amount": 380.0
+            },
+            {
+              "id": "a8581f2e-daab-4542-9ddf-22a5d90449b0",
+              "worklog_id": "36b4836e-d5bc-4dbd-b117-82c00c42bd05",
+              "amount": 195.0
+            }
+          ],
+          "created_at": "2026-03-01T22:09:58.000186",
+          "updated_at": "2026-03-01T22:09:58.036503"
+        }
+      ]
+    },
+    "notes": "Amount breakdown: WL1 = 4hrs*$50 + 3hrs*$50 + $30 bonus = $380. WL2 = 4hrs*$55 - $25 deduction = $195. Total = $575."
+  },
+  "GET /api/v1/settlement/list-all-worklogs?remittanceStatus=UNREMITTED (before settlement)": {
+    "status_code": 200,
+    "response": {
+      "data": [
+        {
+          "id": "b0825bf9-8ca1-4a0b-827d-64b5e37692e5",
+          "user_id": "5ab7017f-02cb-4a7c-adbd-8a2f449a6827",
+          "task_name": "Backend API development for admin@example.com",
+          "amount": 380.0,
+          "time_segments": [
+            {
+              "id": "18ec12f5-ba50-4251-bb1f-43007e2a2e3e",
+              "worklog_id": "b0825bf9-8ca1-4a0b-827d-64b5e37692e5",
+              "start_time": "2026-02-19T14:06:21.004862",
+              "end_time": "2026-02-19T18:06:21.004862",
+              "hourly_rate": 50.0,
+              "created_at": "2026-02-19T22:06:21.004862"
+            },
+            {
+              "id": "44f39114-b786-4aa2-9adc-07a8cbaab1bc",
+              "worklog_id": "b0825bf9-8ca1-4a0b-827d-64b5e37692e5",
+              "start_time": "2026-02-20T14:06:21.004862",
+              "end_time": "2026-02-20T17:06:21.004862",
+              "hourly_rate": 50.0,
+              "created_at": "2026-02-20T22:06:21.004862"
+            }
+          ],
+          "adjustments": [
+            {
+              "id": "8ec5d712-77ee-4282-93ec-7c046ca776db",
+              "worklog_id": "b0825bf9-8ca1-4a0b-827d-64b5e37692e5",
+              "amount": 30.0,
+              "reason": "Bonus for early delivery",
+              "created_at": "2026-02-22T22:06:21.004862"
+            }
+          ],
+          "created_at": "2026-02-19T22:06:21.004862",
+          "updated_at": "2026-02-19T22:06:21.004862"
+        },
+        {
+          "id": "36b4836e-d5bc-4dbd-b117-82c00c42bd05",
+          "user_id": "5ab7017f-02cb-4a7c-adbd-8a2f449a6827",
+          "task_name": "Code review and testing for admin@example.com",
+          "amount": 195.0,
+          "time_segments": [
+            {
+              "id": "f1911dde-699f-4da0-9ccf-0c1c2b7f55c8",
+              "worklog_id": "36b4836e-d5bc-4dbd-b117-82c00c42bd05",
+              "start_time": "2026-02-24T16:06:21.004862",
+              "end_time": "2026-02-24T20:06:21.004862",
+              "hourly_rate": 55.0,
+              "created_at": "2026-02-24T22:06:21.004862"
+            }
+          ],
+          "adjustments": [
+            {
+              "id": "3df68119-abba-47c1-931c-6bd7c511de8a",
+              "worklog_id": "36b4836e-d5bc-4dbd-b117-82c00c42bd05",
+              "amount": -25.0,
+              "reason": "Deduction for incomplete test coverage",
+              "created_at": "2026-02-26T22:06:21.004862"
+            }
+          ],
+          "created_at": "2026-02-24T22:06:21.004862",
+          "updated_at": "2026-02-24T22:06:21.004862"
+        }
+      ],
+      "count": 2
+    }
+  },
+  "GET /api/v1/settlement/list-all-worklogs?remittanceStatus=REMITTED (after settlement)": {
+    "status_code": 200,
+    "response": {
+      "data": [
+        {
+          "id": "b0825bf9-8ca1-4a0b-827d-64b5e37692e5",
+          "user_id": "5ab7017f-02cb-4a7c-adbd-8a2f449a6827",
+          "task_name": "Backend API development for admin@example.com",
+          "amount": 380.0,
+          "time_segments": [
+            {
+              "id": "18ec12f5-ba50-4251-bb1f-43007e2a2e3e",
+              "worklog_id": "b0825bf9-8ca1-4a0b-827d-64b5e37692e5",
+              "start_time": "2026-02-19T14:06:21.004862",
+              "end_time": "2026-02-19T18:06:21.004862",
+              "hourly_rate": 50.0,
+              "created_at": "2026-02-19T22:06:21.004862"
+            },
+            {
+              "id": "44f39114-b786-4aa2-9adc-07a8cbaab1bc",
+              "worklog_id": "b0825bf9-8ca1-4a0b-827d-64b5e37692e5",
+              "start_time": "2026-02-20T14:06:21.004862",
+              "end_time": "2026-02-20T17:06:21.004862",
+              "hourly_rate": 50.0,
+              "created_at": "2026-02-20T22:06:21.004862"
+            }
+          ],
+          "adjustments": [
+            {
+              "id": "8ec5d712-77ee-4282-93ec-7c046ca776db",
+              "worklog_id": "b0825bf9-8ca1-4a0b-827d-64b5e37692e5",
+              "amount": 30.0,
+              "reason": "Bonus for early delivery",
+              "created_at": "2026-02-22T22:06:21.004862"
+            }
+          ],
+          "created_at": "2026-02-19T22:06:21.004862",
+          "updated_at": "2026-02-19T22:06:21.004862"
+        },
+        {
+          "id": "36b4836e-d5bc-4dbd-b117-82c00c42bd05",
+          "user_id": "5ab7017f-02cb-4a7c-adbd-8a2f449a6827",
+          "task_name": "Code review and testing for admin@example.com",
+          "amount": 195.0,
+          "time_segments": [
+            {
+              "id": "f1911dde-699f-4da0-9ccf-0c1c2b7f55c8",
+              "worklog_id": "36b4836e-d5bc-4dbd-b117-82c00c42bd05",
+              "start_time": "2026-02-24T16:06:21.004862",
+              "end_time": "2026-02-24T20:06:21.004862",
+              "hourly_rate": 55.0,
+              "created_at": "2026-02-24T22:06:21.004862"
+            }
+          ],
+          "adjustments": [
+            {
+              "id": "3df68119-abba-47c1-931c-6bd7c511de8a",
+              "worklog_id": "36b4836e-d5bc-4dbd-b117-82c00c42bd05",
+              "amount": -25.0,
+              "reason": "Deduction for incomplete test coverage",
+              "created_at": "2026-02-26T22:06:21.004862"
+            }
+          ],
+          "created_at": "2026-02-24T22:06:21.004862",
+          "updated_at": "2026-02-24T22:06:21.004862"
+        }
+      ],
+      "count": 2
+    },
+    "notes": "After generate-remittances has been called, previously UNREMITTED worklogs become REMITTED."
+  },
+  "GET /api/v1/settlement/list-all-worklogs?remittanceStatus=UNREMITTED (after settlement)": {
+    "status_code": 200,
+    "response": {
+      "data": [],
+      "count": 0
+    },
+    "notes": "All worklogs have been settled, so UNREMITTED returns empty."
+  }
+}

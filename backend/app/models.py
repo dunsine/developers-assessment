@@ -1,4 +1,5 @@
 import uuid
+from datetime import date, datetime
 
 from pydantic import EmailStr
 from sqlmodel import Field, Relationship, SQLModel
@@ -111,3 +112,96 @@ class TokenPayload(SQLModel):
 class NewPassword(SQLModel):
     token: str
     new_password: str = Field(min_length=8, max_length=128)
+
+
+# Settlement Domain Models
+
+
+class WorkLog(SQLModel, table=True):
+    """Container for all work done on a task."""
+
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    user_id: uuid.UUID = Field(foreign_key="user.id", nullable=False, index=True)
+    task_name: str = Field(max_length=500)
+    created_at: datetime = Field(default_factory=datetime.utcnow, index=True)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+    time_segments: list["TimeSegment"] = Relationship(
+        back_populates="worklog", cascade_delete=True
+    )
+    adjustments: list["Adjustment"] = Relationship(
+        back_populates="worklog", cascade_delete=True
+    )
+    remittance_worklogs: list["RemittanceWorklog"] = Relationship(
+        back_populates="worklog"
+    )
+
+
+class TimeSegment(SQLModel, table=True):
+    """Individual recorded time entry within a worklog."""
+
+    __tablename__ = "time_segment"
+
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    worklog_id: uuid.UUID = Field(
+        foreign_key="worklog.id", nullable=False, index=True, ondelete="CASCADE"
+    )
+    start_time: datetime
+    end_time: datetime
+    hourly_rate: float
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+    worklog: WorkLog | None = Relationship(back_populates="time_segments")
+
+
+class Adjustment(SQLModel, table=True):
+    """Retroactive deduction or addition on a worklog."""
+
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    worklog_id: uuid.UUID = Field(
+        foreign_key="worklog.id", nullable=False, index=True, ondelete="CASCADE"
+    )
+    amount: float
+    reason: str = Field(max_length=500)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+    worklog: WorkLog | None = Relationship(back_populates="adjustments")
+
+
+class Remittance(SQLModel, table=True):
+    """Single monthly payout to a worker."""
+
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    user_id: uuid.UUID = Field(foreign_key="user.id", nullable=False, index=True)
+    period_start: date = Field(index=True)
+    period_end: date = Field(index=True)
+    total_amount: float
+    status: str = Field(max_length=20, index=True)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+    remittance_worklogs: list["RemittanceWorklog"] = Relationship(
+        back_populates="remittance", cascade_delete=True
+    )
+
+
+class RemittanceWorklog(SQLModel, table=True):
+    """Links worklogs to the remittance that settled them."""
+
+    __tablename__ = "remittance_worklog"
+
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    remittance_id: uuid.UUID = Field(
+        foreign_key="remittance.id", nullable=False, index=True, ondelete="CASCADE"
+    )
+    worklog_id: uuid.UUID = Field(
+        foreign_key="worklog.id", nullable=False, index=True
+    )
+    amount: float
+
+    remittance: Remittance | None = Relationship(
+        back_populates="remittance_worklogs"
+    )
+    worklog: WorkLog | None = Relationship(
+        back_populates="remittance_worklogs"
+    )
